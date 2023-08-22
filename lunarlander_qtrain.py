@@ -8,8 +8,16 @@ sample run:
     python lunarlander_qtrain.py -n 100000
 """
 
+# gym imports
 import gymnasium as gym
 import lib.lib_plot as plot
+
+# DQN imports
+from lib.lib_RL import Agent
+import tensorflow as tf
+from keras.models import Sequential
+from keras.layers import Dense, Reshape
+from keras.optimizers import adam_v2
 
 # argparse
 import argparse
@@ -31,28 +39,44 @@ total_reward = 0
 plot.init_plot('qtrain')
 REWARD_TABLE = 'final_reward'
 
-# DQN / Deep Q-Network
-import tensorflow as tf
-from keras.models import Sequential
-from keras.layers import Dense, Reshape
-from keras.optimizers import adam_v2
-
-input_shape = env.observation_space.shape
-model = Sequential(
-    [
-        tf.keras.Input(shape=input_shape),
-        Dense(1024, activation='relu'),
-        Dense(1024, activation='relu'),
-        Dense(4)
-    ]
+"""
+DQN / Deep Q-Network
+"""
+agent = Agent(
+    env.action_space,
+    model=Sequential(
+        [
+            tf.keras.Input(shape=env.observation_space.shape),
+            Dense(1024, activation='relu'),
+            Dense(1024, activation='relu'),
+            Dense(4)
+        ]
+    ),
+    epsilon=.5,
+    epsilon_min=0,
+    epsilon_decay=1-1E-2,
+    opt=adam_v2.Adam(learning_rate=1E-4)
 )
 
+
+"""
+Training loop
+"""
 epoch = 0
+step = 0
 while running and epoch != num_epochs:
 
-    action = env.action_space.sample()  # agent policy that uses the observation and info
-    observation, reward, terminated, truncated, info = env.step(action)
+    action = agent.choose_action(observation)  # agent policy that uses the observation and info
+    observation_, reward, terminated, truncated, info = env.step(action)
+
+    agent.store_trainsition(observation, action, reward, observation_)
+
+    if (step > 200) and(step % 5 == 0):
+        agent.learn()
+
+    observation = observation_
     total_reward += reward
+    step += 1
 
     if terminated or truncated:
         # plotting

@@ -15,6 +15,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+"""
+Plotting Graph (Realtime Update)
+
+usage:
+    initialization: 
+        plot.init_plot('qtrain')
+    update visuals: 
+        plot.update_table(REWARD_TABLE, {'final_reward': total_reward}, epoch)
+        :: REWARD_TABLE: legacy input
+        :: {'final_reward': total_reward}: dictionary containing entries
+        :: epoch: the x coordinate of the plot
+"""
 global subdir, summary_dir, summary_writer
 
 ax = plt.axes()
@@ -27,10 +39,10 @@ def init_plot(prefix: str):
     global subdir, summary_dir, df
     now = time.localtime()
     subdir = time.strftime(f'{prefix}_%Y%m%d%H%M%S', now)
-    subsubdir = os.path.join('data', subdir)
+    subdir = os.path.join('data', subdir)
 
-    summary_dir = os.path.join(subsubdir, 'logs.csv')
-    os.makedirs(subsubdir)
+    summary_dir = os.path.join(subdir, 'logs.csv')
+    os.makedirs(subdir)
     """
     global summary_writer
     summary_writer = tf.summary.create_file_writer(summary_dir)
@@ -90,6 +102,24 @@ def update_table(table_name: str, vals: dict[str, float], step: int):
         last_update = now
 
 
+def write(file:str, contents: str):
+    """
+    Outputting text to file.
+
+    usage:
+        model.summary(print_fn=lambda contents: plot.write('model_structure.txt', contents))
+            OR
+        plot.write('model_structure.txt', contents)
+
+    The file will be written under the {subdir} directory.
+    """
+    with open(os.path.join(subdir, file), 'a+') as f:
+        f.write(contents + '\n')
+
+
+"""
+Graph Plotting (Main Thread)
+"""
 if __name__ == '__main__':
     # not working
     import argparse
@@ -98,7 +128,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     subdir = args.file
-    summary_dir = os.path.join('data', subdir, 'logs.csv')
+    subdir = os.path.join('data', subdir)
+    summary_dir = os.path.join(subdir, 'logs.csv')
     print(summary_dir)
 
     is_main = True
