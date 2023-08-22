@@ -1,0 +1,28 @@
+
+# virtual environment setup
+
+python -m venv venv
+.\venv\Scripts\activate
+
+pip3 install swig
+pip install gymnasium[box2d]
+pip install tensorflow-gpu==2.10
+pip install matplotlib
+pip install pandas
+
+
+# entering virtual environment
+
+.\venv\Scripts\activate
+
+
+# human mode
+
+python lunarlander_play.py
+
+# random benchmark
+
+python lunarlander_random.py
+// force stop by Ctrl+C in terminal
+
+
