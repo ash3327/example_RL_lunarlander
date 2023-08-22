@@ -27,8 +27,25 @@ observation, info = env.reset()
 running = True
 total_reward = 0
 
+# plotting
 plot.init_plot('qtrain')
 REWARD_TABLE = 'final_reward'
+
+# DQN / Deep Q-Network
+import tensorflow as tf
+from keras.models import Sequential
+from keras.layers import Dense, Reshape
+from keras.optimizers import adam_v2
+
+input_shape = env.observation_space.shape
+model = Sequential(
+    [
+        tf.keras.Input(shape=input_shape),
+        Dense(1024, activation='relu'),
+        Dense(1024, activation='relu'),
+        Dense(4)
+    ]
+)
 
 epoch = 0
 while running and epoch != num_epochs:
@@ -38,6 +55,7 @@ while running and epoch != num_epochs:
     total_reward += reward
 
     if terminated or truncated:
+        # plotting
         print(f'Session {epoch} ended {"successfully" if total_reward>=200 else "in failure"} with reward: {total_reward}')
         plot.update_table(REWARD_TABLE, {'final_reward': total_reward}, epoch)
         observation, info = env.reset()
