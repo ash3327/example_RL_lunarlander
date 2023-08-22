@@ -1,7 +1,26 @@
-# import pygame
+
+"""
+random mode:
+    python lunarlander_random.py
+        -n --num_epochs : integer > 0
+
+sample run:
+    python lunarlander_random.py -n 500
+"""
+
 import gymnasium as gym
 import lib.lib_plot as plot
 
+# argparse
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-n', '--num_epochs', type=int, default=-1, help='Number of epochs of the random test.')
+args = parser.parse_args()
+
+num_epochs = args.num_epochs
+
+# environment building
 # env = gym.make("LunarLander-v2", render_mode="human", continuous=True)
 env = gym.make("LunarLander-v2", continuous=True)
 observation, info = env.reset()
@@ -13,7 +32,7 @@ plot.init_plot('random')
 REWARD_TABLE = 'final_reward'
 
 epoch = 0
-while running:
+while running and epoch != num_epochs:
     # events = pygame.event.get()
     # for event in events:
     #     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:

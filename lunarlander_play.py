@@ -1,3 +1,9 @@
+
+"""
+human mode:
+    python lunarlander_play.py
+"""
+
 import pygame
 import numpy as np
 import gymnasium as gym

@@ -1,10 +1,17 @@
+
+"""
+plotting saved instances:
+    python lib/lib_plot.py
+        -f --file : if the saved DIRECTORY is data/random_20230822124105, only input 'random_20230822124105'
+
+sample run:
+    python lib/lib_plot.py -f 'random_20230822124021'
+"""
+
 import os
 import time
 
 import pandas as pd
-import tensorflow as tf
-from tensorboard import program
-import threading
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
@@ -13,15 +20,6 @@ global subdir, summary_dir, summary_writer
 ax = plt.axes()
 df = pd.DataFrame()
 is_main = False
-
-
-def launch_plot():
-    """
-    tb = program.TensorBoard()
-    tb.configure(argv=[None, '--logdir', summary_dir])
-    url = tb.launch()
-    print(f'Tensorflow listening on {url}')
-    """
 
 
 def init_plot(prefix: str):
@@ -102,7 +100,6 @@ if __name__ == '__main__':
     subdir = args.file
     summary_dir = os.path.join('data', subdir, 'logs.csv')
     print(summary_dir)
-    launch_plot()
 
     is_main = True
 

@@ -1,6 +1,26 @@
+
+"""
+training mode:
+    python lunarlander_qtrain.py
+            -n --num_epochs : integer > 0
+
+sample run:
+    python lunarlander_qtrain.py -n 100000
+"""
+
 import gymnasium as gym
 import lib.lib_plot as plot
 
+# argparse
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-n', '--num_epochs', type=int, default=-1, help='Number of epochs of the random test.')
+args = parser.parse_args()
+
+num_epochs = args.num_epochs
+
+# environment building
 env = gym.make("LunarLander-v2", continuous=True)
 observation, info = env.reset()
 
@@ -11,7 +31,7 @@ plot.init_plot('qtrain')
 REWARD_TABLE = 'final_reward'
 
 epoch = 0
-while running:
+while running and epoch != num_epochs:
 
     action = env.action_space.sample()  # agent policy that uses the observation and info
     observation, reward, terminated, truncated, info = env.step(action)
